@@ -280,7 +280,7 @@ This project is licensed under the [MIT LICENSE](LICENSE) - see the LICENSE file
 ## 📞 Support & Contact
 
 -   🐛 Issues: Feel free to report bugs or suggest features on [GitHub Issues](https://github.com/niranjan022/AI_EVENT_PLANNER_CHATBOT/issues).
--   📧 Contact: [niranjanrajagopal@outlook## License
+-   📧 Contact: [niranjanrajagopal@outlook].
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
@@ -293,24 +293,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - ❌ Liability
 - ❌ Warranty
 
-### Other Licenses
-
-Some dependencies may be under different licenses:
-- [Dependency 1](https://github.com/author/dep1) - Apache 2.0
-- [Dependency 2](https://github.com/author/dep2) - BSD 3-Clause
-
----
-
-**Made with ❤️ by [Your Name](https://github.com/username)**
-
-.com] <!-- TODO: Add a valid contact email -->
-
----
-
-<div align="center">
-
 **⭐ Star this repo if you find it helpful!**
 
-Made with ❤️ by [niranjan022](https://github.com/niranjan022)
+Made with ❤️ by Niranjan Raja
 
 </div>
