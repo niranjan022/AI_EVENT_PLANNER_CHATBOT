@@ -11,7 +11,6 @@
 
 [![GitHub issues](https://img.shields.io/github/issues/niranjan022/AI_EVENT_PLANNER_CHATBOT?style=for-the-badge)](https://github.com/niranjan022/AI_EVENT_PLANNER_CHATBOT/issues)
 
-
 **An intelligent, AI-powered chatbot designed to simplify and streamline your event planning process.**
 
 <!-- TODO: Add a live demo link if available -->
@@ -27,13 +26,13 @@ The AI Event Planner Chatbot is an innovative application that leverages artific
 
 ## ✨ Features
 
--   🎯 **AI-Powered Conversational Interface:** Interact naturally with the chatbot to discuss event details and requirements.
--   📝 **Event Detail Collection:** Automatically gathers critical information like event type, date, time, location, and guest count.
--   💡 **Intelligent Suggestions:** Receives recommendations for themes, venues, catering, and activities based on user input.
--   📅 **Timeline & Task Management:** Helps users create and manage event timelines and task lists.
--   ✍️ **Event Summary Generation:** Provides a concise summary of the planned event details.
--   🔒 **User Session Management:** Maintains context throughout the conversation for a seamless planning experience.
--   📱 **Responsive Design:** Accessible and user-friendly across various devices and screen sizes.
+- 🎯 **AI-Powered Conversational Interface:** Interact naturally with the chatbot to discuss event details and requirements.
+- 📝 **Event Detail Collection:** Automatically gathers critical information like event type, date, time, location, and guest count.
+- 💡 **Intelligent Suggestions:** Receives recommendations for themes, venues, catering, and activities based on user input.
+- 📅 **Timeline & Task Management:** Helps users create and manage event timelines and task lists.
+- ✍️ **Event Summary Generation:** Provides a concise summary of the planned event details.
+- 🔒 **User Session Management:** Maintains context throughout the conversation for a seamless planning experience.
+- 📱 **Responsive Design:** Accessible and user-friendly across various devices and screen sizes.
 
 ## 🖥️ Screenshots
 
@@ -72,14 +71,16 @@ The AI Event Planner Chatbot is an innovative application that leverages artific
 Follow these steps to get the AI Event Planner Chatbot up and running on your local machine.
 
 ### Prerequisites
--   **Python 3.8+**: Essential for the backend AI logic.
--   **Node.js & npm (or yarn/pnpm)**: Required if there's a separate frontend build process or for managing frontend dependencies.
-    -   Node.js (version 16.x or higher recommended)
-    -   npm (version 8.x or higher)
+
+- **Python 3.8+**: Essential for the backend AI logic.
+- **Node.js & npm (or yarn/pnpm)**: Required if there's a separate frontend build process or for managing frontend dependencies.
+  - Node.js (version 16.x or higher recommended)
+  - npm (version 8.x or higher)
 
 ### Installation
 
 1.  **Clone the repository**
+
     ```bash
     git clone https://github.com/niranjan022/AI_EVENT_PLANNER_CHATBOT.git
     cd AI_EVENT_PLANNER_CHATBOT
@@ -87,11 +88,13 @@ Follow these steps to get the AI Event Planner Chatbot up and running on your lo
 
 2.  **Navigate to the project directory**
     The core project files are located in the `EVENT_PLANNER_CHATBOT` subdirectory.
+
     ```bash
     cd EVENT_PLANNER_CHATBOT
     ```
 
 3.  **Install backend dependencies**
+
     ```bash
     # Create a virtual environment (recommended)
     python -m venv venv
@@ -100,41 +103,49 @@ Follow these steps to get the AI Event Planner Chatbot up and running on your lo
     # Install Python packages
     pip install -r requirements.txt # TODO: Create a requirements.txt based on backend dependencies
     ```
-    *(Note: If `requirements.txt` is not present, you'll need to manually install `Flask` and `openai` via `pip install flask openai` or similar.)*
+
+    _(Note: If `requirements.txt` is not present, you'll need to manually install `Flask` and `openai` via `pip install flask openai` or similar.)_
 
 4.  **Install frontend dependencies** (if applicable)
+
     ```bash
     # If there's a separate frontend directory with its own package.json
     # cd frontend/
     # npm install # or yarn install / pnpm install
     # cd ../
     ```
-    *(Note: This step is only necessary if the frontend is a separate buildable project. If it's pure HTML/CSS/JS served by the backend, this step can be skipped.)*
+
+    _(Note: This step is only necessary if the frontend is a separate buildable project. If it's pure HTML/CSS/JS served by the backend, this step can be skipped.)_
 
 5.  **Environment setup**
     Create a `.env` file in the `EVENT_PLANNER_CHATBOT` directory.
+
     ```bash
     cp .env.example .env # TODO: Create a .env.example file
     ```
+
     Open `.env` and configure your environment variables:
+
     ```
     OPENAI_API_KEY="your_openai_api_key_here" # Required for AI functionality
     # FLASK_APP=app.py                       # Example for Flask applications
     # FLASK_ENV=development
     ```
-    *Ensure you have an OpenAI API key for the chatbot to function correctly.*
+
+    _Ensure you have an OpenAI API key for the chatbot to function correctly._
 
 6.  **Database setup** (if applicable)
-   Create a MongoDB Database and create a collection for storing the user data.
-(Note: You can use someother database and change the code accordingly)
-   
+    Create a MongoDB Database and create a collection for storing the user data.
+    (Note: You can use someother database and change the code accordingly)
 
 7.  **Start development server**
+
     ```bash
     # For a Python Flask backend
     python app.py # Or `flask run` if FLASK_APP is set in .env
     ```
-    *(Note: If there's a separate frontend, you might need to start it too, e.g., `npm run dev` from the `frontend/` directory.)*
+
+    _(Note: If there's a separate frontend, you might need to start it too, e.g., `npm run dev` from the `frontend/` directory.)_
 
 8.  **Open your browser**
     Visit `http://localhost:[detected_port]` (commonly `http://localhost:5000` for Flask).
@@ -163,47 +174,51 @@ AI_EVENT_PLANNER_CHATBOT/
 ## ⚙️ Configuration
 
 ### Environment Variables
+
 Configure these variables in your `.env` file.
 
-| Variable        | Description                            | Default | Required |
+| Variable | Description | Default | Required |
 
 |-----------------|----------------------------------------|---------|----------|
 
-| `OPENAI_API_KEY`| Your API key for accessing OpenAI services. |         | Yes      |
+| `OPENAI_API_KEY`| Your API key for accessing OpenAI services. | | Yes |
 
-| `FLASK_APP`     | The main Flask application entry point. | `app.py`| No       |
+| `FLASK_APP` | The main Flask application entry point. | `app.py`| No |
 
-| `FLASK_ENV`     | The Flask environment (e.g., `development`, `production`). | `production` | No |
+| `FLASK_ENV` | The Flask environment (e.g., `development`, `production`). | `production` | No |
 
-| `DATABASE_URL`  | URL for database connection (e.g., for PostgreSQL). | `sqlite:///site.db` | No |
+| `DATABASE_URL` | URL for database connection (e.g., for PostgreSQL). | `sqlite:///site.db` | No |
 
 ### Configuration Files
--   `.env`: Stores sensitive environment variables. Not committed to version control.
--   `requirements.txt`: Lists all Python dependencies for the backend.
+
+- `.env`: Stores sensitive environment variables. Not committed to version control.
+- `requirements.txt`: Lists all Python dependencies for the backend.
 
 ## 🔧 Development
 
 ### Available Scripts
-*(Based on common Python Flask project scripts)*
 
-| Command                 | Description                                    |
+_(Based on common Python Flask project scripts)_
+
+| Command | Description |
 
 |-------------------------|------------------------------------------------|
 
-| `python app.py`         | Starts the Flask development server.           |
+| `python app.py` | Starts the Flask development server. |
 
-| `pip install -r requirements.txt` | Installs all Python dependencies.              |
+| `pip install -r requirements.txt` | Installs all Python dependencies. |
 
-| `source venv/bin/activate`| Activates the Python virtual environment.      |
+| `source venv/bin/activate`| Activates the Python virtual environment. |
 
 ### Development Workflow
+
 1.  **Activate Virtual Environment**: Always activate your `venv` before running Python commands.
 2.  **Modify Code**: Make changes to `app.py`, `services/`, `static/`, or `templates/`.
 3.  **Run Server**: Restart the Flask server (`python app.py`) to see changes.
 
 ## 🧪 Testing
 
-*(Based on common Python testing practices)*
+_(Based on common Python testing practices)_
 
 ```bash
 
@@ -227,7 +242,8 @@ Configure these variables in your `.env` file.
 ## 🚀 Deployment
 
 ### Production Build
-*(For a Flask application, a "build" often involves ensuring all dependencies are installed and static files are collected if necessary.)*
+
+_(For a Flask application, a "build" often involves ensuring all dependencies are installed and static files are collected if necessary.)_
 
 ```bash
 
@@ -243,9 +259,10 @@ Configure these variables in your `.env` file.
 ```
 
 ### Deployment Options
--   **Heroku/Render**: Suitable for Flask applications. Requires a `Procfile` (TODO).
--   **Docker**: Containerization offers isolated environments. A `Dockerfile` (TODO) would be beneficial.
--   **Traditional Hosting (VPS)**: Deploy using a WSGI server like Gunicorn/uWSGI with Nginx/Apache.
+
+- **Heroku/Render**: Suitable for Flask applications. Requires a `Procfile` (TODO).
+- **Docker**: Containerization offers isolated environments. A `Dockerfile` (TODO) would be beneficial.
+- **Traditional Hosting (VPS)**: Deploy using a WSGI server like Gunicorn/uWSGI with Nginx/Apache.
 
 ## 📚 API Reference
 
@@ -265,6 +282,7 @@ We welcome contributions! Please consider the following guidelines:
 8.  **Open a Pull Request** to the `main` branch of this repository.
 
 ### Development Setup for Contributors
+
 Ensure you follow the [Quick Start](#🚀-quick-start) instructions for setting up the environment.
 
 ## 📄 License
@@ -273,14 +291,14 @@ This project is licensed under the [MIT LICENSE](LICENSE) - see the LICENSE file
 
 ## 🙏 Acknowledgments
 
--   **OpenAI**: For providing powerful AI models that enable the chatbot's intelligence.
--   **Flask**: For the lightweight web framework simplifying backend development.
--   **The open-source community**: For countless tools and libraries that make development possible.
+- **OpenAI**: For providing powerful AI models that enable the chatbot's intelligence.
+- **Flask**: For the lightweight web framework simplifying backend development.
+- **The open-source community**: For countless tools and libraries that make development possible.
 
 ## 📞 Support & Contact
 
--   🐛 Issues: Feel free to report bugs or suggest features on [GitHub Issues](https://github.com/niranjan022/AI_EVENT_PLANNER_CHATBOT/issues).
--   📧 Contact: [niranjanrajagopal@outlook## License
+- 🐛 Issues: Feel free to report bugs or suggest features on [GitHub Issues](https://github.com/niranjan022/AI_EVENT_PLANNER_CHATBOT/issues).
+- 📧 Contact: [niranjanrajagopal@outlook## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
@@ -293,24 +311,10 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - ❌ Liability
 - ❌ Warranty
 
-### Other Licenses
-
-Some dependencies may be under different licenses:
-- [Dependency 1](https://github.com/author/dep1) - Apache 2.0
-- [Dependency 2](https://github.com/author/dep2) - BSD 3-Clause
-
----
-
-**Made with ❤️ by [Your Name](https://github.com/username)**
-
-.com] <!-- TODO: Add a valid contact email -->
-
----
-
 <div align="center">
 
 **⭐ Star this repo if you find it helpful!**
 
-Made with ❤️ by [niranjan022](https://github.com/niranjan022)
+Made with ❤️ by Niranjan Raja
 
 </div>
