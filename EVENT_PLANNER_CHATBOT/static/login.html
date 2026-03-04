@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Planner | Login</title>
+  <style>
+    :root { --bg: #0f172a; --card: #ffffff; --accent: #0ea5e9; --text: #0f172a; --muted: #475569; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at 20% 20%, #0ea5e920, transparent 35%), #0b1221; color:#e2e8f0; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .shell { width: 380px; background: var(--card); color: var(--text); border-radius: 14px; padding: 24px; box-shadow: 0 18px 50px rgba(0,0,0,0.28); }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    p { margin: 0 0 14px; color: var(--muted); }
+    label { display:block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
+    input { width:100%; padding:11px 12px; border-radius: 10px; border:1px solid #e2e8f0; font-size:14px; }
+    .actions { display:flex; gap:10px; margin-top: 14px; }
+    button { flex:1; padding:11px 14px; border:none; border-radius: 10px; font-weight:600; cursor:pointer; }
+    .primary { background: var(--accent); color:#fff; box-shadow: 0 12px 30px rgba(14,165,233,0.35); }
+    .ghost { background: #e2e8f0; color: var(--text); }
+    .status { margin-top: 10px; font-size: 13px; color: #dc2626; min-height: 18px; }
+    .link { margin-top: 6px; font-size: 13px; color: var(--muted); text-align:center; }
+    a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>Welcome back</h1>
+    <p>Sign in or create an account to access your travel dashboard.</p>
+    <label for="name">Name (for signup)</label>
+    <input id="name" placeholder="Alex" />
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" />
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" />
+    <div class="actions">
+      <button class="primary" id="login">Login</button>
+      <button class="ghost" id="signup">Signup</button>
+    </div>
+    <div id="status" class="status"></div>
+    <div class="link">After login you will be redirected to your dashboard.</div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    async function auth(mode) {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const name = document.getElementById('name').value.trim();
+      if (!email || !password) { statusEl.textContent = 'Email and password are required.'; return; }
+      statusEl.textContent = 'Working...';
+      try {
+        const res = await fetch(`/api/${mode}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        statusEl.textContent = 'Success. Redirecting...';
+        window.location.href = '/dashboard';
+      } catch (err) {
+        statusEl.textContent = err.message;
+      }
+    }
+
+    document.getElementById('login').addEventListener('click', () => auth('login'));
+    document.getElementById('signup').addEventListener('click', () => auth('signup'));
+
+    (async function init() {
+      try {
+        const res = await fetch('/api/profile');
+        if (res.ok) {
+          window.location.href = '/dashboard';
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Planner | Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b1221;
+      --card: #0f172a;
+      --panel: #0a162b;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-2: #f97316;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      height: 100vh;
+      padding: 12px;
+      transition: grid-template-columns 220ms ease;
+      min-height: 0;
+    }
+
+    .app.panel-collapsed {
+      grid-template-columns: auto 1fr 0px;
+    }
+
+    aside {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      width: 260px;
+      min-width: 220px;
+      max-width: 400px;
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    main {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 0;
+      min-width: 320px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      transition: width 220ms ease, opacity 200ms ease, padding 200ms ease;
+      min-height: 0;
+      width: 340px;
+      min-width: 280px;
+      max-width: 600px;
+      resize: horizontal;
+      overflow: auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .section {
+      margin-top: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 8px 0 4px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0b1426;
+      color: var(--text);
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 180ms ease, background 160ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #0b1221;
+    }
+
+    .btn.secondary {
+      background: #1e293b;
+      color: var(--text);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 16px;
+    }
+
+    .itinerary {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #0b1426;
+      animation: cardFade 220ms ease;
+    }
+
+    .time {
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .activity {
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .loc {
+      color: var(--text);
+      margin-top: 4px;
+    }
+
+    .notes {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 6px;
+      min-height: 0;
+    }
+
+    .bubble {
+      max-width: 90%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      animation: chatEnter 220ms ease;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #0b1221;
+      border-top-right-radius: 4px;
+    }
+
+    .bubble.assistant {
+      align-self: flex-start;
+      background: #111c32;
+      color: var(--text);
+      border-top-left-radius: 4px;
+    }
+
+    .bubble .t {
+      display: block;
+      font-size: 11px;
+      color: #cbd5e1;
+      margin-top: 6px;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+    }
+
+    .convos {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .convo {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0b1426;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .convo:hover {
+      border-color: var(--accent);
+      background: #101a30;
+      transform: translateY(-1px);
+    }
+
+    .convo.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.3);
+    }
+
+    .sidebar-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+    }
+
+    .saved {
+      overflow-y: auto;
+      max-height: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .saved-card {
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0b1426;
+    }
+
+    .panel.collapsed {
+      width: 0;
+      padding: 0;
+      opacity: 0;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .flex {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .inline-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .row-split {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body,
+    .app,
+    aside,
+    main,
+    .panel,
+    .chat,
+    .convos,
+    .saved {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) var(--panel);
+    }
+
+    body::-webkit-scrollbar,
+    .app::-webkit-scrollbar,
+    aside::-webkit-scrollbar,
+    main::-webkit-scrollbar,
+    .panel::-webkit-scrollbar,
+    .chat::-webkit-scrollbar,
+    .convos::-webkit-scrollbar,
+    .saved::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body::-webkit-scrollbar-track,
+    .app::-webkit-scrollbar-track,
+    aside::-webkit-scrollbar-track,
+    main::-webkit-scrollbar-track,
+    .panel::-webkit-scrollbar-track,
+    .chat::-webkit-scrollbar-track,
+    .convos::-webkit-scrollbar-track,
+    .saved::-webkit-scrollbar-track {
+      background: var(--panel);
+    }
+
+    body::-webkit-scrollbar-thumb,
+    .app::-webkit-scrollbar-thumb,
+    aside::-webkit-scrollbar-thumb,
+    main::-webkit-scrollbar-thumb,
+    .panel::-webkit-scrollbar-thumb,
+    .chat::-webkit-scrollbar-thumb,
+    .convos::-webkit-scrollbar-thumb,
+    .saved::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
+    }
+
+    body::-webkit-scrollbar-thumb:hover,
+    .app::-webkit-scrollbar-thumb:hover,
+    aside::-webkit-scrollbar-thumb:hover,
+    main::-webkit-scrollbar-thumb:hover,
+    .panel::-webkit-scrollbar-thumb:hover,
+    .chat::-webkit-scrollbar-thumb:hover,
+    .convos::-webkit-scrollbar-thumb:hover,
+    .saved::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    @keyframes chatEnter {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardFade {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <div class="sidebar-title">
+        <span>Conversations</span>
+        <button class="btn secondary" id="new-convo" style="padding:6px 10px;">New</button>
+      </div>
+      <div id="convos" class="convos"></div>
+      <div class="sidebar-title" style="margin-top:6px;">
+        <span>Saved plans</span>
+      </div>
+      <div id="saved" class="saved"></div>
+      <button class="btn ghost" id="logout">Logout</button>
+    </aside>
+
+    <main>
+      <div class="flex" style="justify-content:space-between;">
+        <div>
+          <h1>Travel Dashboard</h1>
+          <div class="muted" id="welcome"></div>
+        </div>
+        <div class="flex">
+          <span class="muted" id="current-convo-label"></span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="grid">
+          <div>
+            <label for="location">Location</label>
+            <input id="location" placeholder="Paris" />
+          </div>
+          <div>
+            <label for="date">Date</label>
+            <input id="date" type="date" />
+          </div>
+          <div>
+            <label for="start">Start</label>
+            <input id="start" type="time" value="09:00" />
+          </div>
+          <div>
+            <label for="end">End</label>
+            <input id="end" type="time" value="22:00" />
+          </div>
+        </div>
+        <label for="prefs">Interests (comma separated)</label>
+        <input id="prefs" placeholder="jazz, galleries" />
+        <label for="prompt">Prompt (optional)</label>
+        <textarea id="prompt" placeholder="Or let us craft it from your fields..."></textarea>
+        <div class="flex" style="margin-top:10px;">
+          <button class="btn primary" id="generate">Generate Itinerary</button>
+          <button class="btn secondary" id="save">Save Itinerary</button>
+          <span id="status" class="status"></span>
+        </div>
+      </div>
+
+      <div class="section" id="itinerary-section">
+        <h3 style="margin:0 0 6px;">Itinerary</h3>
+        <div id="itinerary-empty" class="muted">Start planning a new trip or try another itinerary.</div>
+        <div id="itinerary" class="itinerary hidden"></div>
+      </div>
+    </main>
+
+    <div class="panel" id="qa-panel">
+      <div class="panel-header">
+        <strong>Q&A</strong>
+        <button class="btn ghost" id="toggle-panel" style="padding:6px 10px; display: none;">Collapse</button>
+      </div>
+      <div id="chat" class="chat"></div>
+      <div class="chat-input">
+        <input id="question" placeholder="Ask about this itinerary" />
+        <button class="btn primary" id="ask">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const itineraryEl = document.getElementById('itinerary');
+    const itineraryEmptyEl = document.getElementById('itinerary-empty');
+    const savedEl = document.getElementById('saved');
+    const chatEl = document.getElementById('chat');
+    const convosEl = document.getElementById('convos');
+    const currentConvoLabel = document.getElementById('current-convo-label');
+    const appEl = document.querySelector('.app');
+
+    let currentConvo = null;
+    let currentItinerary = [];
+
+    marked.setOptions({ mangle: false, headerIds: false, breaks: true });
+
+    function sanitizeMarkdown(text) {
+      return (text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    async function loadProfile() {
+      const res = await fetch('/api/profile');
+      if (res.status === 401) { window.location.href = '/login'; return null; }
+      const data = await res.json();
+      document.getElementById('welcome').textContent = `Hello, ${data.profile.name}`;
+      return data.profile;
+    }
+
+    function renderItinerary(items) {
+      currentItinerary = items || [];
+      if (!items || !items.length) {
+        itineraryEl.classList.add('hidden');
+        itineraryEmptyEl.classList.remove('hidden');
+        itineraryEl.innerHTML = '';
+        return;
+      }
+      itineraryEmptyEl.classList.add('hidden');
+      itineraryEl.classList.remove('hidden');
+      itineraryEl.innerHTML = items.map(i => `<div class="card"><div class="time">${i.time_slot || ''}</div><div class="activity">${i.activity || ''}</div><div class="loc">${i.location || ''}</div><div class="notes">${i.notes || ''}</div></div>`).join('');
+    }
+
+    function renderSaved(list) {
+      if (!list || !list.length) { savedEl.innerHTML = '<div class="muted">No saved itineraries.</div>'; return; }
+      savedEl.innerHTML = list.map(item => `<div class="saved-card"><div class="row-split"><div>${item.title || 'Trip'}</div><button class="inline-btn" data-id="${item.id}" data-type="saved">Delete</button></div><div class="muted">${item.date || ''}</div><div class="muted">${(item.items || []).length} stops</div></div>`).join('');
+      savedEl.querySelectorAll('button[data-type="saved"]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.id;
+          await deleteSaved(id);
+        });
+      });
+    }
+
+    function renderChat(messages) {
+      chatEl.innerHTML = '';
+      (messages || []).forEach(m => {
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${m.role}`;
+        if (m.role === 'assistant') {
+          const safe = sanitizeMarkdown(m.content || '');
+          bubble.innerHTML = `${marked.parse(safe)}<span class="t">${m.timestamp || ''}</span>`;
+        } else {
+          const content = document.createElement('div');
+          content.textContent = m.content || '';
+          const ts = document.createElement('span');
+          ts.className = 't';
+          ts.textContent = m.timestamp || '';
+          bubble.appendChild(content);
+          bubble.appendChild(ts);
+        }
+        chatEl.appendChild(bubble);
+      });
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function renderConvos(list) {
+      if (!list || !list.length) { convosEl.innerHTML = '<div class="muted">No conversations yet.</div>'; return; }
+      convosEl.innerHTML = list.map(c => `<div class="convo ${currentConvo === c.id ? 'active' : ''}" data-id="${c.id}"><div class="row-split"><div>${c.title || 'Conversation'}</div><button class="inline-btn" data-id="${c.id}" data-type="convo">Delete</button></div><div class="muted" style="font-size:12px;">${c.updated_at || ''}</div></div>`).join('');
+      convosEl.querySelectorAll('.convo').forEach(el => {
+        el.addEventListener('click', (evt) => {
+          if (evt.target.dataset.type === 'convo') return;
+          selectConvo(el.dataset.id);
+        });
+      });
+      convosEl.querySelectorAll('button[data-type="convo"]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await deleteConvo(btn.dataset.id);
+        });
+      });
+    }
+
+    async function selectConvo(id) {
+      currentConvo = id;
+      currentConvoLabel.textContent = `Conversation: ${id}`;
+      const res = await fetch(`/api/conversations/${id}`);
+      if (res.status === 401) { window.location.href = '/login'; return; }
+      const data = await res.json();
+      const convo = data.conversation;
+      renderChat(convo.messages || []);
+      if (convo.itinerary) renderItinerary(convo.itinerary);
+      loadConvos();
+    }
+
+    async function loadConvos() {
+      const res = await fetch('/api/conversations');
+      if (res.status === 401) { window.location.href = '/login'; return; }
+      const data = await res.json();
+      renderConvos(data.conversations || []);
+    }
+
+    async function loadSaved() {
+      const res = await fetch('/api/itinerary/saved');
+      if (res.status === 401) { window.location.href = '/login'; return; }
+      const data = await res.json();
+      renderSaved(data.saved || []);
+    }
+
+    async function generate() {
+      statusEl.textContent = 'Working...';
+      const body = {
+        prompt: document.getElementById('prompt').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        date: document.getElementById('date').value,
+        preferences: document.getElementById('prefs').value.split(',').map(p => p.trim()).filter(Boolean),
+        start_time: document.getElementById('start').value || '09:00',
+        end_time: document.getElementById('end').value || '22:00',
+        conversation_id: currentConvo,
+      };
+      const res = await fetch('/api/itinerary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Error'; return; }
+      currentConvo = data.conversation_id;
+      currentConvoLabel.textContent = `Conversation: ${currentConvo}`;
+      renderItinerary(data.itinerary || []);
+      statusEl.textContent = 'Done';
+      await loadConvos();
+      await loadSaved();
+    }
+
+    async function saveItinerary() {
+      if (!currentItinerary.length) { statusEl.textContent = 'Nothing to save.'; return; }
+      const res = await fetch('/api/itinerary/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itinerary: currentItinerary, title: `${document.getElementById('location').value || 'Trip'} ${document.getElementById('date').value || ''}`, date: document.getElementById('date').value, location: document.getElementById('location').value }) });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Save failed'; return; }
+      statusEl.textContent = 'Saved';
+      loadSaved();
+    }
+
+    async function ask() {
+      const q = document.getElementById('question').value.trim();
+      if (!q) return;
+      if (!currentConvo) {
+        await createConvo({ resetOnly: true });
+      }
+      const res = await fetch('/api/itinerary/question', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: q, itinerary: currentItinerary, conversation_id: currentConvo }) });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Error'; return; }
+      currentConvo = data.conversation_id || currentConvo;
+      document.getElementById('question').value = '';
+      selectConvo(currentConvo);
+    }
+
+    async function createConvo(opts = {}) {
+      const res = await fetch('/api/conversations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: 'New conversation' }) });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Error'; return; }
+      currentConvo = data.conversation_id;
+      currentConvoLabel.textContent = `Conversation: ${currentConvo}`;
+      renderChat([]);
+      renderItinerary([]);
+      resetForm();
+      if (!opts.resetOnly) await loadConvos();
+    }
+
+    async function deleteConvo(id) {
+      const res = await fetch(`/api/conversations/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Error'; return; }
+      if (currentConvo === id) {
+        currentConvo = null;
+        currentConvoLabel.textContent = '';
+        renderChat([]);
+        renderItinerary([]);
+        resetForm();
+      }
+      loadConvos();
+    }
+
+    async function deleteSaved(id) {
+      const res = await fetch(`/api/itinerary/saved/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) { statusEl.textContent = data.error || 'Error'; return; }
+      loadSaved();
+    }
+
+    function resetForm() {
+      document.getElementById('prompt').value = '';
+      document.getElementById('location').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('prefs').value = '';
+      document.getElementById('start').value = '09:00';
+      document.getElementById('end').value = '22:00';
+      statusEl.textContent = '';
+      itineraryEmptyEl.classList.remove('hidden');
+      itineraryEl.classList.add('hidden');
+      itineraryEl.innerHTML = '';
+      currentItinerary = [];
+      chatEl.innerHTML = '';
+    }
+
+    document.getElementById('generate').addEventListener('click', generate);
+    document.getElementById('save').addEventListener('click', saveItinerary);
+    document.getElementById('ask').addEventListener('click', ask);
+    document.getElementById('new-convo').addEventListener('click', () => createConvo({ resetOnly: false }));
+    document.getElementById('logout').addEventListener('click', async () => { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/login'; });
+
+    // document.getElementById('toggle-panel').addEventListener('click', () => {
+    //   const panel = document.getElementById('qa-panel');
+    //   panel.classList.toggle('collapsed');
+    //   appEl.classList.toggle('panel-collapsed', panel.classList.contains('collapsed'));
+    // });
+
+    (async function init() {
+      await loadProfile();
+      await loadConvos();
+      await loadSaved();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').value = today;
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Travel Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #0ea5e9;
+      --accent-2: #f97316;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Space Grotesk', 'Segoe UI', sans-serif; background: radial-gradient(circle at 20% 20%, #ecfeff, #fef3c7 38%, #f8fafc 70%); color: var(--ink); margin:0; padding:24px; }
+    .shell { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+    header { display:flex; justify-content: space-between; gap:16px; align-items: flex-start; }
+    .hero { flex:1; padding:20px 22px; border-radius: 14px; background: linear-gradient(135deg, rgba(14,165,233,0.14), rgba(249,115,22,0.12)); border:1px solid var(--border); box-shadow: 0 20px 50px rgba(15,23,42,0.08); }
+    h1 { margin:0; font-size:28px; letter-spacing:-0.02em; }
+    .tagline { margin:8px 0 0; color: var(--muted); font-size: 15px; }
+    .auth-card { width: 320px; background: var(--card); border:1px solid var(--border); border-radius: 14px; padding:14px 16px; box-shadow: 0 16px 34px rgba(15,23,42,0.06); }
+    .auth-card h3 { margin:4px 0 10px; }
+    label { display:block; font-size:13px; color: var(--muted); margin:10px 0 6px; }
+    input, textarea, select { width:100%; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-family: inherit; font-size:14px; background:#f8fafc; }
+    textarea { min-height: 80px; resize: vertical; }
+    .row { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 14px; padding:16px; box-shadow: 0 12px 24px rgba(15,23,42,0.05); }
+    .actions { display:flex; gap:10px; margin-top:14px; align-items: center; flex-wrap: wrap; }
+    button { border:none; border-radius: 12px; padding:11px 16px; font-size:14px; font-weight:600; cursor:pointer; transition: transform 120ms ease, box-shadow 160ms ease; }
+    button.primary { background: var(--ink); color:#fff; box-shadow: 0 12px 26px rgba(15,23,42,0.18); }
+    button.secondary { background: #e0f2fe; color: #0f172a; }
+    button.ghost { background: #fff; color: var(--ink); border:1px solid var(--border); }
+    button:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+    button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(15,23,42,0.12); }
+    .status { font-size: 13px; color: var(--muted); margin-top:8px; }
+    .itinerary-list { display:grid; gap:12px; margin-top:12px; }
+    .item { padding:14px 16px; border:1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+    .time { color: var(--accent-2); font-weight:700; letter-spacing: 0.01em; }
+    .activity { font-weight:700; margin-top:4px; }
+    .notes { margin-top:6px; color: var(--muted); }
+    .loc { margin-top:6px; color:#0f172a; font-weight:600; }
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius: 999px; background:#e0f2fe; color:#075985; font-size:12px; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-weight:700; }
+    .saved-grid { display:grid; gap:10px; }
+    .saved-card { border:1px solid var(--border); border-radius: 12px; padding:12px; background:#fefce8; }
+    .flex { display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
+    .question-box { display:flex; gap:8px; margin-top:12px; }
+    .question-box input { flex:1; }
+    .badge { background:#e2e8f0; color:#0f172a; padding:3px 7px; border-radius:8px; font-size:12px; }
+    .small { font-size:12px; color: var(--muted); }
+    .chat { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+    .bubble { padding:10px 12px; border-radius: 14px; max-width: 80%; box-shadow: 0 6px 16px rgba(15,23,42,0.08); }
+    .bubble.user { align-self: flex-end; background:#0ea5e9; color:#fff; border-top-right-radius: 4px; }
+    .bubble.assistant { align-self: flex-start; background:#f1f5f9; color:#0f172a; border-top-left-radius: 4px; }
+    .bubble .time { display:block; font-size:11px; opacity:0.8; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="hero">
+        <h1>Event Planner Assistant</h1>
+        <p class="tagline">Pick a date, search a city, and craft itineraries you can save, revisit, and ask questions about.</p>
+        <div class="actions" style="margin-top:10px;">
+          <span class="pill">🗓️ Calendar-powered</span>
+          <span class="pill">📍 Location search</span>
+          <span class="pill">💾 Save &amp; recall</span>
+        </div>
+      </div>
+      <div class="auth-card">
+        <h3>Login / Signup</h3>
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" placeholder="you@example.com" />
+        <label for="auth-name">Name</label>
+        <input id="auth-name" type="text" placeholder="Optional" />
+        <label for="auth-pass">Password</label>
+        <input id="auth-pass" type="password" placeholder="••••••" />
+        <div class="actions">
+          <button class="primary" id="signup">Create Account</button>
+          <button class="ghost" id="login">Login</button>
+        </div>
+        <div id="auth-status" class="status"></div>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="location">Location</label>
+          <input list="locations" id="location" placeholder="Search city or venue" />
+          <datalist id="locations">
+            <option value="Paris"></option>
+            <option value="New York"></option>
+            <option value="London"></option>
+            <option value="Tokyo"></option>
+            <option value="Toronto"></option>
+            <option value="Singapore"></option>
+            <option value="Sydney"></option>
+          </datalist>
+        </div>
+        <div>
+          <label for="date">Date</label>
+          <input id="date" type="date" />
+        </div>
+        <div>
+          <label for="start">Start Time</label>
+          <input id="start" type="time" value="09:00" />
+        </div>
+        <div>
+          <label for="end">End Time</label>
+          <input id="end" type="time" value="22:00" />
+        </div>
+      </div>
+      <label for="prefs">Interests (comma separated)</label>
+      <input id="prefs" type="text" placeholder="jazz, history, galleries" />
+      <label for="prompt">Freeform Prompt (optional)</label>
+      <textarea id="prompt" placeholder="Or let us craft the prompt for you..."></textarea>
+      <div class="actions">
+        <button class="primary" id="go">Generate Itinerary</button>
+        <button class="secondary" id="try-again">Try another date/location</button>
+        <span id="status" class="status"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>Itinerary</span>
+        <div class="flex">
+          <button class="ghost" id="save-plan">Save this plan</button>
+          <span class="badge" id="auth-badge">Guest</span>
+        </div>
+      </div>
+      <div id="results" class="itinerary-list"></div>
+      <div class="question-box">
+        <input id="question" type="text" placeholder="Ask a question about this itinerary" />
+        <button class="secondary" id="ask">Ask</button>
+      </div>
+      <div id="answer" class="status"></div>
+      <div id="chat" class="chat"></div>
+    </div>
+
+    <div class="card" id="profile-card">
+      <div class="section-title">
+        <span>Saved itineraries &amp; history</span>
+        <span class="small" id="profile-name"></span>
+      </div>
+      <div class="row">
+        <div>
+          <div class="small">Saved itineraries</div>
+          <div id="saved" class="saved-grid"></div>
+        </div>
+        <div>
+          <div class="small">Recent chat</div>
+          <div id="history" class="saved-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('go');
+    const tryBtn = document.getElementById('try-again');
+    const promptEl = document.getElementById('prompt');
+    const statusEl = document.getElementById('status');
+    const resultsEl = document.getElementById('results');
+    const prefsEl = document.getElementById('prefs');
+    const locationEl = document.getElementById('location');
+    const dateEl = document.getElementById('date');
+    const startEl = document.getElementById('start');
+    const endEl = document.getElementById('end');
+    const saveBtn = document.getElementById('save-plan');
+    const questionEl = document.getElementById('question');
+    const askBtn = document.getElementById('ask');
+    const answerEl = document.getElementById('answer');
+    const chatEl = document.getElementById('chat');
+    const authStatus = document.getElementById('auth-status');
+    const savedEl = document.getElementById('saved');
+    const historyEl = document.getElementById('history');
+    const authBadge = document.getElementById('auth-badge');
+    const profileName = document.getElementById('profile-name');
+
+    let token = localStorage.getItem('token') || '';
+    let currentItinerary = [];
+    let currentMeta = { location: '', date: '' };
+    let conversation = [];
+
+    document.getElementById('signup').addEventListener('click', () => auth('signup'));
+    document.getElementById('login').addEventListener('click', () => auth('login'));
+
+    btn.addEventListener('click', generate);
+    tryBtn.addEventListener('click', () => { statusEl.textContent = 'Adjust your date and location, then generate again.'; });
+    saveBtn.addEventListener('click', saveItinerary);
+    askBtn.addEventListener('click', askQuestion);
+
+    async function auth(mode) {
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-pass').value.trim();
+      const name = document.getElementById('auth-name').value.trim();
+      if (!email || !password) {
+        authStatus.textContent = 'Email and password are required.';
+        return;
+      }
+      authStatus.textContent = 'Working...';
+      try {
+        const res = await fetch(`/api/${mode}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        setToken(data.token, 'Signed in.');
+        renderProfile(data.profile);
+        loadHistory();
+      } catch (err) {
+        authStatus.textContent = err.message;
+      }
+    }
+
+    function setToken(value, message = '') {
+      token = value || '';
+      if (token) localStorage.setItem('token', token);
+      if (message) authStatus.textContent = message;
+    }
+
+
+    async function generate() {
+      const prompt = promptEl.value.trim();
+      const location = locationEl.value.trim();
+      const date = dateEl.value;
+      const preferences = prefsEl.value.split(',').map(p => p.trim()).filter(Boolean);
+      const start_time = startEl.value || '09:00';
+      const end_time = endEl.value || '22:00';
+      if (!prompt && (!location || !date)) {
+        statusEl.textContent = 'Add a prompt or pick a location and date.';
+        return;
+      }
+      statusEl.textContent = 'Thinking...';
+      btn.disabled = true;
+      resultsEl.innerHTML = '';
+      try {
+        const res = await fetch('/api/itinerary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'X-Auth-Token': token } : {}) },
+          body: JSON.stringify({ prompt, location, date, preferences, start_time, end_time })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        currentItinerary = data.itinerary || [];
+        currentMeta = data.meta || { location, date };
+        statusEl.textContent = `Ready${data.meta?.date ? ' • ' + data.meta.date : ''}`;
+        render(currentItinerary);
+        loadHistory();
+      } catch (err) {
+        statusEl.textContent = err.message;
+        render([]);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function saveItinerary() {
+      if (!token) {
+        statusEl.textContent = 'Login to save this itinerary.';
+        return;
+      }
+      if (!currentItinerary.length) {
+        statusEl.textContent = 'Generate an itinerary first.';
+        return;
+      }
+      statusEl.textContent = 'Saving...';
+      try {
+        const res = await fetch('/api/itinerary/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Auth-Token': token },
+          body: JSON.stringify({ itinerary: currentItinerary, prompt: promptEl.value, date: currentMeta.date, location: currentMeta.location, title: `${currentMeta.location || 'Trip'} on ${currentMeta.date || 'date'}` })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Save failed');
+        statusEl.textContent = 'Saved.';
+        renderSaved([data.saved, ...(savedEl._data || [])]);
+      } catch (err) {
+        statusEl.textContent = err.message;
+      }
+    }
+
+    async function askQuestion() {
+      const question = questionEl.value.trim();
+      if (!question) return;
+      if (!currentItinerary.length) {
+        answerEl.textContent = 'Generate an itinerary first.';
+        return;
+      }
+      answerEl.textContent = 'Thinking...';
+      conversation.push({ role: 'user', content: question, timestamp: new Date().toISOString() });
+      renderChat(conversation);
+      try {
+        const res = await fetch('/api/itinerary/question', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'X-Auth-Token': token } : {}) },
+          body: JSON.stringify({ question, itinerary: currentItinerary })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        answerEl.textContent = data.answer;
+        conversation.push({ role: 'assistant', content: data.answer, timestamp: new Date().toISOString() });
+        renderChat(conversation);
+        loadHistory();
+      } catch (err) {
+        answerEl.textContent = err.message;
+      }
+    }
+
+    function render(items) {
+      if (!items.length) {
+        resultsEl.innerHTML = `<div style="padding:20px; border:1px dashed ${'var(--border)'}; border-radius:12px; text-align:center;">No itinerary yet. Pick a date and location, then generate.</div>`;
+        return;
+      }
+      resultsEl.innerHTML = items.map(item => {
+        return `<div class="item">
+          <div class="time">${item.time_slot || ''}</div>
+          <div class="activity">${item.activity || ''}</div>
+          <div class="loc">📍 ${item.location || ''}</div>
+          <div class="notes">💡 ${item.notes || ''}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderSaved(list) {
+      savedEl._data = list;
+      if (!list || !list.length) {
+        savedEl.innerHTML = '<div class="small">No saved itineraries yet.</div>';
+        return;
+      }
+      savedEl.innerHTML = list.map(item => `<div class="saved-card">
+          <div class="flex" style="justify-content:space-between;">
+            <strong>${item.title}</strong>
+            <span class="badge">${item.date || ''}</span>
+          </div>
+          <div class="small">${item.location || ''}</div>
+          <div class="small">${(item.items || []).length} stops</div>
+        </div>`).join('');
+    }
+
+    function renderHistory(list) {
+      if (!list || !list.length) {
+        historyEl.innerHTML = '<div class="small">No chat yet.</div>';
+        return;
+      }
+      historyEl.innerHTML = list.map(msg => `<div class="saved-card" style="background:#f8fafc;">
+          <div class="badge">${msg.role}</div>
+          <div>${msg.content}</div>
+          <div class="small">${msg.timestamp}</div>
+        </div>`).join('');
+    }
+
+    function renderChat(list) {
+      if (!list || !list.length) {
+        chatEl.innerHTML = '<div class="small">Ask a question to start a conversation.</div>';
+        return;
+      }
+      chatEl.innerHTML = list.map(msg => `<div class="bubble ${msg.role}">
+          <div>${msg.content}</div>
+          <span class="time">${msg.timestamp || ''}</span>
+        </div>`).join('');
+    }
+
+    function renderProfile(profile) {
+      if (!profile) {
+        authBadge.textContent = 'Guest';
+        profileName.textContent = '';
+        return;
+      }
+      authBadge.textContent = profile.email;
+      profileName.textContent = profile.name || profile.email;
+    }
+
+    async function loadHistory() {
+      if (!token) return;
+      try {
+        const res = await fetch('/api/history', { headers: { 'X-Auth-Token': token } });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '');
+        renderSaved(data.saved_itineraries || []);
+        conversation = data.chat_history || [];
+        renderHistory(conversation);
+        renderChat(conversation);
+      } catch (err) {
+        console.warn(err.message);
+      }
+    }
+
+    async function initProfile() {
+      if (!token) return;
+      try {
+        const res = await fetch('/api/profile', { headers: { 'X-Auth-Token': token } });
+        const data = await res.json();
+        if (res.ok) {
+          renderProfile(data.profile);
+          renderSaved(data.saved || []);
+        }
+      } catch (err) {
+        console.warn(err.message);
+      }
+    }
+
+    (async function init() {
+      if (token) {
+        await initProfile();
+        await loadHistory();
+      }
+      const today = new Date().toISOString().split('T')[0];
+      dateEl.value = today;
+    })();
+  </script>
+</body>
+</html>

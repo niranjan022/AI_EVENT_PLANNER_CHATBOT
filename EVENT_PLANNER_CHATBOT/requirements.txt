@@ -1,0 +1,11 @@
+google-generativeai
+openai
+requests
+flask
+pydantic
+python-dotenv
+numpy
+scikit-learn
+colorama
+pymongo
+PyJWT
