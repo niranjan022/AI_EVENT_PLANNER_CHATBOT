@@ -130,7 +130,7 @@ class TravelAgent:
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
     ):
-        # 1. Understand User
+       
         if location and date:
             req = UserRequest(
                 location=location.strip(),
@@ -143,21 +143,15 @@ class TravelAgent:
             req = self.parse_request(user_input)
 
         self._validate_request(req)
-        # print(f"✅ AGENT: Parsed Request -> {req.location}, Likes: {req.preferences}")
-
-        # 2. Fetch External Data
+       
         event_date = self._resolve_date(req.date)
         raw_events = self.tools.fetch_events(req.location, event_date)
         if not raw_events:
             return []
 
-        # 3. Apply Logic (Ranking)
-        # Filter top 4 events to fit in a day
+        
         sorted_events = self.ranker.rank_events(req.preferences, raw_events)[:4]
-        # print(f"✅ AGENT: Selected top {len(sorted_events)} events: {[e.name for e in sorted_events]}")
-
-        # 4. Generate Final Plan using LLM
-        # We pass the *structured* data to Gemini so it just formats, doesn't hallucinate.
+       
         enriched = []
         for e in sorted_events:
             d = e.model_dump()
@@ -186,7 +180,7 @@ class TravelAgent:
         """
         final_raw = json.loads(self._generate_json(final_prompt))
 
-        # Normalize various JSON response shapes into a list of itinerary items
+        
         if isinstance(final_raw, dict):
             if "itinerary" in final_raw:
                 items = final_raw["itinerary"]

@@ -14,10 +14,9 @@ from models import UserProfile, SavedItinerary, ChatMessage, ItineraryItem
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "dev-secret")
 JWT_SECRET = os.getenv("JWT_SECRET", "dev-jwt-secret")
-JWT_EXP_MIN = int(os.getenv("JWT_EXP_MIN", "4320"))  # default 3 days
+JWT_EXP_MIN = int(os.getenv("JWT_EXP_MIN", "4320")) 
 
-# Database setup (MongoDB)
-# Set MONGO_URI to your cluster string (e.g. mongodb+srv://user:pass@cluster1.zbkf6.mongodb.net) and MONGO_DB to the DB name.
+
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "event_planner")
 mongo_client = MongoClient(MONGO_URI)

@@ -2,7 +2,7 @@ import sys
 from agent import TravelAgent
 from colorama import Fore, Style, init
 
-# Initialize colors
+
 init(autoreset=True)
 
 def main():

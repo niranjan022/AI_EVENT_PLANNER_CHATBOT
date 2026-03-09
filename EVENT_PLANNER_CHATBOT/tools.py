@@ -28,7 +28,7 @@ class TravelTools:
     def _fetch_ticketmaster(self, location: str, date: Optional[str]) -> List[Event]:
         base_url = "https://app.ticketmaster.com/discovery/v2/events.json"
 
-        # Build date window
+       
         try:
             day = datetime.fromisoformat(date) if date else datetime.utcnow().date()
         except ValueError:
@@ -104,6 +104,6 @@ class TravelTools:
 
     def get_travel_time(self, loc_a: str, loc_b: str) -> int:
         """MOCK API: Simulates Google Distance Matrix."""
-        # Simple logic: if locations are different, take 30 mins.
+       
         if loc_a == loc_b: return 0
         return 30
