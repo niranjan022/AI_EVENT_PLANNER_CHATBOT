@@ -8,3 +8,4 @@ scikit-learn
 colorama
 pymongo
 PyJWT
+gunicorn
